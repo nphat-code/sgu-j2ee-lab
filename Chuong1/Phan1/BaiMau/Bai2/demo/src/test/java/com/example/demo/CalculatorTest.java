@@ -2,7 +2,6 @@ package com.example.demo;
 
 import static org.mockito.ArgumentMatchers.anyChar;
 
-import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Assertions;
