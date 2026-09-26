@@ -12,5 +12,6 @@
     <modules>
         <module>Chuong1/Phan1/BaiMau/Bai1/demo</module>
         <module>Chuong1/Phan1/BaiMau/Bai2/demo</module>
+        <module>Chuong1/Phan1/BaiMau/Bai3/demo</module>
     </modules>
 </project>
