@@ -20,5 +20,7 @@ public class Example16 {
         } else {
             System.out.println("VehicleServices bean is a prototype scoped bean");
         }
+
+        context.close();
     }
 }

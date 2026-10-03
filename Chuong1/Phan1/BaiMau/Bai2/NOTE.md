@@ -332,3 +332,32 @@ Kiểm tra xem hệ thống có **ném ra đúng ngoại lệ `IllegalArgumentEx
      - Nếu khi chạy hàm `calculate(...)` mà **có ném ra** đúng lỗi `IllegalArgumentException` (từ `.orElseThrow(...)` trong Stream) ➔ Test **PASS** (đúng như mong đợi).
      - Nếu hàm chạy bình thường (không có lỗi) hoặc ném ra lỗi khác ➔ Test **FAIL**.
 
+### 10.3. Giải thích chuyên sâu: Tại sao lại dùng `handles(anyChar())` và trả về `false`?
+
+```java
+when(mockOperation.handles(anyChar())).thenReturn(false);
+```
+
+Dòng code này được viết để phục vụ đúng **mục tiêu của kịch bản kiểm thử (Test Scenario)**:
+
+1. **Tại sao lại dùng `anyChar()` (Argument Matcher)?**
+   - `anyChar()` đại diện cho **bất kỳ ký tự nào** được truyền vào hàm `handles(...)`.
+   - **Tính tổng quát:** Giúp bài test không bị phụ thuộc cứng vào một ký tự cụ thể. Dù ở dòng sau gọi `calculator.calculate(2, 2, '*')` hay đổi thành `'/'`, `'^'`, `'$'`, mock object vẫn nhận diện được.
+   - Thể hiện ý đồ rõ ràng: *"Bất kể là ký tự toán tử nào, phép toán mock này cũng từ chối xử lý"*.
+
+2. **Tại sao bắt buộc phải trả về `false` (`thenReturn(false)`)?**
+   - Xem lại luồng xử lý bên trong [Calculator.java](file:///c:/Study/HK1Nam3/J2EE/Lab/Chuong1/Phan1/BaiMau/Bai2/demo/src/main/java/com/example/demo/Calculator.java):
+     ```java
+     operations.stream()
+         .filter((operation) -> operation.handles(op)) // <-- Bước quyết định
+         .map((operation) -> operation.apply(lhs, rhs))
+         .findFirst()
+         .orElseThrow(() -> new IllegalArgumentException("Unknown operation " + op));
+     ```
+   - **Tạo điều kiện để ngoại lệ xảy ra:** Tên test case là `throwExceptionWhenNoSuitableOperationFound` (*ném ngoại lệ khi không tìm thấy phép toán phù hợp*).
+   - Khi `handles(...)` trả về `false`, bước `.filter(...)` sẽ loại bỏ `mockOperation` ra khỏi Stream ➔ Stream bị rỗng.
+   - Stream rỗng thì `.findFirst()` trả về `Optional.empty()` ➔ kích hoạt `.orElseThrow(...)` ném ra ngoại lệ `IllegalArgumentException`.
+   - **Nếu trả về `true` thì sao?** 
+     - Stream sẽ giữ lại `mockOperation` và tiếp tục gọi đến `operation.apply(lhs, rhs)`. 
+     - Lúc này không có ngoại lệ nào được ném ra ➔ Lệnh `Assertions.assertThrows(...)` ở dòng tiếp theo sẽ báo lỗi **FAIL** vì mong đợi có ngoại lệ xảy ra nhưng thực tế hàm lại chạy êm đẹp.
+

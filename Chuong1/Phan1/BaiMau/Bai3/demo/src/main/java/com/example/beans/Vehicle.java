@@ -1,25 +1,37 @@
+package com.example.beans;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import com.example.services.VehicleServices;
+
 @Component("vehicleBean")
 public class Vehicle {
-    private String name="Honda";
+    private String name = "Honda";
     private final VehicleServices vehicleServices;
-    @AutoWired
-    public Vehicle(VehicleServices vehicleServices){
+
+    @Autowired
+    public Vehicle(VehicleServices vehicleServices) {
         this.vehicleServices = vehicleServices;
     }
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-    public void setName(String name){
+
+    public void setName(String name) {
         this.name = name;
     }
-    public VehicleServices getVehicleServices(){
+
+    public VehicleServices getVehicleServices() {
         return vehicleServices;
     }
-    public void printHello(){
+
+    public void printHello() {
         System.out.println("Printing Hello from Component Vehicle Bean");
     }
+
     @Override
-    public String toString(){
+    public String toString() {
         return "Vehicle name is - " + name;
     }
 }

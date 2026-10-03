@@ -9,3 +9,7 @@
 2. **Code Modification Constraint:**
    - Chỉ giải thích hoặc sửa đúng phạm vi người dùng yêu cầu.
    - Không tự ý sinh thêm implementation vào file code `.java` nếu người dùng chưa yêu cầu, để người dùng tự tay thực hành gõ code theo tài liệu.
+
+3. **Git Auto-Push on Completion Rule:**
+   - Hoàn thành xong phần nào (bài mẫu, bài thực hành, fix lỗi hoàn chỉnh cho một bài tập), trợ lý AI phải tự động commit theo chuẩn Conventional Commits và push trực tiếp phần đó lên git remote (`git push origin <branch>`).
+   - Tham khảo chi tiết tại: [`.agents/rules/git-workflow.md`](file:///.agents/rules/git-workflow.md).

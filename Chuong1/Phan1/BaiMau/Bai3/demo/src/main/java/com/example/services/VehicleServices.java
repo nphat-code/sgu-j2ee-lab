@@ -1,31 +1,48 @@
+package com.example.services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import com.example.interfaces.Speakers;
+import com.example.interfaces.Tyres;
+
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class VehicleServices {
-    @AutoWired
+    @Autowired
     private Speakers speakers;
     private Tyres tyres;
-    public VehicleServices(){
+
+    public VehicleServices() {
         System.out.println("VehicleServices object is created");
     }
-    public void playMusic(){
+
+    public void playMusic() {
         String music = speakers.makeSound();
         System.out.println(music);
     }
-    public void moveVehicle(){
+
+    public void moveVehicle() {
         String status = tyres.rotate();
         System.out.println(status);
     }
-    public Speakers getSpeakers(){
+
+    public Speakers getSpeakers() {
         return speakers;
     }
-    public void setSpeakers(Speakers speakers){
+
+    public void setSpeakers(Speakers speakers) {
         this.speakers = speakers;
     }
-    public Tyres getTyres(){
+
+    public Tyres getTyres() {
         return tyres;
     }
-    @AutoWired
-    public void setTyres(Tyres tyres){
+
+    @Autowired
+    public void setTyres(Tyres tyres) {
         this.tyres = tyres;
     }
 }
