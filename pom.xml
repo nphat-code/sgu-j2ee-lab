@@ -15,6 +15,7 @@
         <module>Chuong1/Phan1/BaiMau/Bai3/demo</module>
         <module>Chuong1/Phan1/BaiThem/DuAn1.1/demo</module>
         <module>Chuong1/Phan1/BaiThem/DuAn1.2/demo</module>
+        <module>Chuong1/Phan1/BaiThem/DuAn1.3/demo</module>
         <module>Chuong1/Phan2/BaiMau/Bai2/demo</module>
     </modules>
 </project>
