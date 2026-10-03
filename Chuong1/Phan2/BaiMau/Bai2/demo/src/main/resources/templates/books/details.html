@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Library - Book Details</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+    <div th:if="${book != null}">
+        <div>
+            <h2 th:text="${book.title}">Title</h2>
+            <p><strong>Authors:</strong> <span th:text="${book.authors}">authors</span></p>
+            <p><strong>ISBN:</strong> <span th:text="${book.isbn}">ISBN</span></p>
+        </div>
+    </div>
+
+    <div th:if="${book == null}">
+        <h1 th:text="'No book found with ISBN: ' + ${param.isbn}">Not Found</h1>
+    </div>
+
+    <br/>
+    <a th:href="@{/books.html}">Back to list</a>
+</body>
+</html>
