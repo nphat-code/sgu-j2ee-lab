@@ -150,3 +150,36 @@ Thực hành và hiểu rõ:
 4. Trong hàm `main`:
    - Lấy bean `PizzaController` từ context: `context.getBean(PizzaController.class)`.
    - Gọi `pizzaController.getPizza()` ➔ nhận về chuỗi `"Veg Pizza"` và in ra console.
+
+---
+
+## 6. Phân Tích Chuyên Sâu: Cơ Chế Hoạt Động Của PizzaController
+
+### 6.1. Bản chất thiết kế của `PizzaController`
+* **Annotation `@Component`:** Báo cho Spring Boot biết `PizzaController` là một Bean cần được IoC Container quản lý vòng đời (tạo, tiêm phụ thuộc, hủy).
+* **Nguyên lý Loose Coupling (Liên kết lỏng):** `PizzaController` không phụ thuộc vào lớp cụ thể (`VegPizza` hay `NonVegPizza`) mà chỉ phụ thuộc vào trừu tượng (`Pizza` interface). Điều này giúp dễ dàng hoán đổi triển khai mà không cần sửa đổi logic cốt lõi.
+
+### 6.2. Cơ chế giải quyết phụ thuộc lúc khởi tạo
+Đoạn code trong `PizzaController`:
+```java
+@Autowired
+public PizzaController(@Qualifier("vegPizza") Pizza pizza) {
+    System.out.println("inside PizzaController constructor");
+    this.pizza = pizza;
+}
+```
+1. **Phát hiện Constructor:** Spring quét thấy `PizzaController` có một constructor yêu cầu một đối tượng triển khai interface `Pizza`.
+2. **Xử lý tính mơ hồ (Ambiguity Resolution):** 
+   - Trong Container đang có 2 Bean hợp lệ: `vegPizza` và `nonVegPizza`.
+   - Nhờ có `@Qualifier("vegPizza")`, Spring định danh chính xác Bean cần lấy là `vegPizza`.
+3. **Gọi Constructor:** Spring thực hiện truyền instance `vegPizza` vào và in dòng chữ `"inside PizzaController constructor"` ra màn hình console trong pha khởi động.
+
+### 6.3. Cơ chế ủy quyền thực thi (Delegation Pattern)
+```java
+public String getPizza() {
+    return pizza.getPizza();
+}
+```
+* Khi bên ngoài gọi `pizzaController.getPizza()`, Controller không tự mình sinh ra nội dung chuỗi mà ủy quyền (delegate) việc xử lý cho đối tượng `pizza` nội tại (đang trỏ tới `VegPizza`).
+* Kết quả trả về là `"Veg Pizza"`.
+
