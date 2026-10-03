@@ -127,3 +127,21 @@ public class PropertySourceDemo implements InitializingBean {
 | **Thời điểm phân giải** | Lúc khởi tạo Bean (Bean Post Processor) | Bất cứ lúc nào trong runtime khi gọi method |
 | **Khả năng kiểm tra key** | Báo lỗi lúc khởi động nếu thiếu key và không có default | Kiểm tra linh hoạt qua `containsProperty(key)` |
 | **Trường hợp khuyên dùng** | Hầu hết các nhu cầu gán cấu hình vào field cố định | Các tình huống cần duyệt động cấu hình, profile động |
+
+---
+
+## 6. Tổng Kết: Bài 1.4 Làm Gì & Luồng Chạy Chi Tiết
+
+### 6.1. Mục đích của bài 1.4
+Bài tập 1.4 giải quyết bài toán: **Làm thế nào để ứng dụng Java/Spring đọc các thông số cấu hình từ file `.properties` bên ngoài thay vì viết chết (hard-code) trong code?**
+
+Cụ thể trong bài:
+1. Bạn có tập tin [`config.properties`](file:///c:/Study/HK1Nam3/J2EE/Lab/Chuong1/Phan1/BaiThem/DuAn1.4/demo/src/main/resources/config.properties) chứa thông tin kết nối Database (`jdbc.driver`, `jdbc.url`, `jdbc.username`, `jdbc.password`).
+2. Spring Boot khởi chạy [`Application.java`](file:///c:/Study/HK1Nam3/J2EE/Lab/Chuong1/Phan1/BaiThem/DuAn1.4/demo/src/main/java/net/guides/springboot2/springpropertysourceexample/Application.java).
+3. Class [`PropertySourceDemo.java`](file:///c:/Study/HK1Nam3/J2EE/Lab/Chuong1/Phan1/BaiThem/DuAn1.4/demo/src/main/java/net/guides/springboot2/springpropertysourceexample/PropertySourceDemo.java) được đánh dấu `@Configuration` và `@PropertySource("classpath:config.properties")`:
+   - Ra lệnh cho Spring nạp toàn bộ cặp key-value từ `config.properties` vào bộ nhớ quản lý của Spring (`Environment`).
+   - Tự động tiêm các giá trị này vào các trường dữ liệu qua `@Value("${jdbc....}")`.
+4. Khi quá trình tiêm hoàn tất, Spring gọi phương thức `afterPropertiesSet()`:
+   - Ghi log các giá trị ra console bằng `LOGGER.info(...)`.
+   - Lấy giá trị thông qua `env.getProperty(...)` để tạo đối tượng [`DataSourceConfig`](file:///c:/Study/HK1Nam3/J2EE/Lab/Chuong1/Phan1/BaiThem/DuAn1.4/demo/src/main/java/net/guides/springboot2/springpropertysourceexample/DataSourceConfig.java) và in ra chuỗi đại diện: `DataSourceConfig [driver=..., url=..., username=...]`.
+
