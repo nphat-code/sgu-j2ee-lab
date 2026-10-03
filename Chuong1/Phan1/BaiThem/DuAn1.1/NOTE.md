@@ -139,3 +139,26 @@ public class SpringApplication {
 3. Khi gọi `context.getBean(GreetingService.class)`, Spring trích xuất instance đó ra từ Cache.
 4. Lời gọi `greetingService.sayGreeting()` in thông điệp ra console.
 5. `context.close()` giải phóng toàn bộ tài nguyên của container trước khi thoát chương trình.
+
+---
+
+## 6. Chuyên Sâu: File Cấu Hình `AppConf` Chạy Khi Nào?
+
+Lớp cấu hình `AppConf` được Spring IoC Container nạp và thực thi **ngay tại thời điểm khởi tạo Container**, cụ thể là khi dòng lệnh sau chạy:
+
+```java
+var context = new AnnotationConfigApplicationContext(AppConf.class);
+```
+
+### Chi tiết các giai đoạn diễn ra bên dưới:
+1. **Đăng ký Metadata (Configuration Registration):**
+   - `AnnotationConfigApplicationContext` nhận tham số `AppConf.class` và đăng ký nó như một Bean cấu hình nguồn.
+2. **Tạo CGLIB Proxy:**
+   - Spring nhận thấy annotation `@Configuration`. Nó dùng thư viện CGLIB để tạo ra một lớp con proxy bọc quanh `AppConf`.
+   - Mục đích: Đảm bảo mọi lời gọi đến phương thức `@Bean` đều trả về cùng một thể hiện duy nhất (Singleton Semantics).
+3. **Thực thi các phương thức `@Bean` (Bean Instantiation):**
+   - Ngay trong quá trình khởi động Container (Eager initialization), Spring tự động gọi phương thức `greetingService()` trong `AppConf`.
+   - Lệnh `new GreetingService()` và `service.setMessage(...)` được thực thi tại đây.
+   - Đối tượng vừa tạo được đưa ngay vào bộ nhớ đệm **Singleton Cache (Registry)** của Spring.
+4. **Khi gọi `context.getBean(GreetingService.class)`:**
+   - Lúc này Spring **KHÔNG** chạy lại phương thức trong `AppConf` nữa, mà chỉ lấy đối tượng đã được khởi tạo sẵn ở bước 3 trong Cache ra sử dụng.
