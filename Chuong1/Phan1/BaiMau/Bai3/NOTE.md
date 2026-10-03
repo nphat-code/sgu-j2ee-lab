@@ -57,6 +57,22 @@ Trong Spring Framework, **Scope** định nghĩa vòng đời và cách Spring C
   ```
   ➔ Spring xác nhận đây là **Prototype Scoped Bean**.
 
+### 2.1. Chuyên sâu: Tại sao khi lấy 2 Bean Singleton thì 2 đối tượng lại giống hệt nhau?
+Khi một Bean là **Singleton** (mặc định trong Spring), cơ chế hoạt động của Spring IoC Container như sau:
+
+1. **Bộ nhớ đệm Singleton (Singleton Cache / Registry):**
+   - Spring Container duy trì một bảng băm nội bộ (thực chất là một `Map<String, Object>`) để lưu trữ tất cả các instance Singleton.
+2. **Quy trình khi gọi `context.getBean(...)`:**
+   - **Lần gọi đầu tiên (hoặc lúc khởi động Container):** Spring kiểm tra Cache, thấy chưa có bean ➔ Spring gọi Constructor (`new VehicleServices()`) ➔ in ra console dòng `"VehicleServices object is created"` ➔ đưa đối tượng vừa tạo vào Cache ➔ trả về địa chỉ ô nhớ gán cho biến thứ nhất.
+   - **Lần gọi thứ hai:** Spring kiểm tra Cache ➔ phát hiện đối tượng **đã tồn tại** ➔ Spring **không tạo mới** (không gọi lại constructor) ➔ trả về ngay chính địa chỉ ô nhớ của đối tượng đã tạo trước đó gán cho biến thứ hai.
+3. **Bản chất của phép so sánh `==` và `hashCode()`:**
+   - Trong Java, phép so sánh `==` giữa 2 biến tham chiếu là **so sánh địa chỉ vùng nhớ trên RAM (Heap Memory)**.
+   - Do cả `vehicleServices1` và `vehicleServices2` cùng trỏ vào **duy nhất 1 địa chỉ ô nhớ** mà Spring quản lý trong Cache, nên:
+     - `hashCode()` của chúng trùng khớp 100%.
+     - `vehicleServices1 == vehicleServices2` trả về `true`.
+4. **Mục đích thiết kế Singleton của Spring:**
+   - **Tối ưu hiệu năng & RAM:** Các lớp Service/Repository/Controller thường là **Stateless** (chỉ chứa logic xử lý, không lưu trạng thái riêng biệt của từng người dùng). Tái sử dụng 1 instance duy nhất giúp tiết kiệm bộ nhớ và giảm tải áp lực dọn rác cho Garbage Collector (GC).
+
 ---
 
 ## 3. Xử Lý Xung Đột Nhiều Bean Triển Khai Cùng Interface Với `@Primary`
